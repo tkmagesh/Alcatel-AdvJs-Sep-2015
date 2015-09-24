@@ -3,6 +3,38 @@
     <head>
         <meta charset="UTF-8">
         <title>Calculator</title>
+        <script>
+            window.addEventListener("DOMContentLoaded", init);
+            function init(){
+                var btnCalculate = document.getElementById("btnCalculate");
+                btnCalculate.addEventListener("click", calculate);
+            }
+            function calculate(){
+                var txtNumber1 = document.getElementById("txtNumber1");
+                var txtNumber2 = document.getElementById("txtNumber2");
+                var number1 = parseInt(txtNumber1.value);
+                var number2 = parseInt(txtNumber2.value);
+
+                var operation = document.getElementById("selectOperation").value;
+                var result = 0;
+                switch (operation){
+                    case 'add' :
+                        result = number1 + number2;
+                        break;
+                    case 'subtract' :
+                        result = number1 - number2;
+                        break;
+                    case 'multiply' :
+                        result = number1 * number2;
+                        break;
+                    case 'divide' :
+                        result = number1 / number2;
+                        break;
+                }
+                document.getElementById("divResult").innerHTML = result;
+            }
+
+        </script>
     </head>
     <body>
         <input type="text" name="n1" id="txtNumber1">
