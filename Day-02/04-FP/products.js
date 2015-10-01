@@ -8,9 +8,9 @@ var products = [
 
 /*
 sort - done
-filter - filter any list by any criteria
-all
-any
+filter - filter any list by any criteria - done
+all - returns true if ALL the items in the list satisfies the given criteria, else returns false
+any - returns true if ANY of the item in the list statisfies the given criteria, else returns false
 sum
 min
 max
@@ -132,6 +132,8 @@ print("Filtering", function(){
         var costlyProductCriteria = function(product){
             return product.cost > 50;
         }
+
+
         print("Costly Products", function(){
             var allCostlyProducts = filter(products, costlyProductCriteria);
             console.table(allCostlyProducts);
@@ -139,11 +141,96 @@ print("Filtering", function(){
         var category1ProductCriteria = function(product){
             return product.category === 1;
         };
+
+
         print("Category 1 products", function(){
             var allCategory1Products = filter(products, category1ProductCriteria);;
             console.table(allCategory1Products);
         });
+
+        /*var affordableProductCriteria = function(product){
+            return !costlyProductCriteria(product);
+        };
+
+        var noncategory1ProductCriteria = function(product){
+            return !category1ProductCriteria(product);
+        };*/
+
+
+        function negate(predicate){
+            return function(){
+                return !predicate.apply(this,arguments);
+            };
+        }
+        var affordableProductCriteria = negate(costlyProductCriteria);
+        var nonCategory1ProductCriteria = negate(category1ProductCriteria);
+        print("Negate", function(){
+            print("Affordable products [ !coslty products]", function(){
+                var affordableProducts = filter(products, affordableProductCriteria);
+                console.table(affordableProducts);
+            });
+            print("Non category 1 products", function(){
+                var nonCategory1Products = filter(products, nonCategory1ProductCriteria);
+                console.table(nonCategory1Products);
+            })
+        })
     });
 });
 
+print("All", function(){
+    function all(list, criteriaFn){
+        for(var i=0; i<list.length; i++)
+            if (!criteriaFn(list[i])) return false;
+        return true;
+    }
+    print("Are all products costly ?", function(){
+        var result = all(products, function(p){ return p.cost > 50;});
+        console.log(result);
+    });
+})
+
+print("Any", function(){
+    function any(list, criteriaFn){
+        for(var i=0; i<list.length; i++)
+            if (criteriaFn(list[i])) return true;
+        return false;
+    }
+    print("Are there ANY costly product ?", function(){
+        var result = any(products, function(p){ return p.cost > 50;});
+        console.log(result);
+    });
+})
+
+print("GroupBy", function(){
+    function groupBy(list, keySelectorFn){
+        var result = {};
+        for(var i=0; i<list.length; i++){
+            var item = list[i];
+            var key = keySelectorFn(item);
+            result[key] = result[key] || [];
+            result[key].push(item);
+        }
+        return result;
+    }
+    print("Products grouped by category", function(){
+        var productsByCategory = groupBy(products, function(p){
+            return p.category;
+        });
+        for(var key in productsByCategory){
+            print("Key - " + key, function(){
+               console.table(productsByCategory[key]);
+            });
+        }
+    });
+    print("Products grouped by cost", function(){
+        var productsByCost = groupBy(products, function(p){
+            return p.cost > 50 ? "costly" : "affordable"
+        });
+        for(var key in productsByCost){
+            print("Key - " + key, function(){
+               console.table(productsByCost[key]);
+            });
+        }
+    });
+});
 
