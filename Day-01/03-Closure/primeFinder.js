@@ -8,9 +8,10 @@ function getPrimeFinder(){
         return true;
     }
     return function(n){
-        if (typeof cache[n] === "undefined")
-            cache[n] = isPrime(n);
-        return cache[n];
+        var key = n;
+        if (typeof cache[key] === "undefined")
+            cache[key] = isPrime(n);
+        return cache[key];
     }
 }
 
