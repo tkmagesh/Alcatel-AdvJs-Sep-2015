@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Calculator</title>
+        <script src="jquery-2.1.4.js"></script>
+        <style>
+            .invalid{
+                border : 1px solid red;
+                background-color: lightpink;
+            }
+            .errorMessages{
+                color : red;
+                font-style: italic;
+            }
+        </style>
+        <script>
+            var calculator = {
+                add : function(n1, n2){
+                    return n1 + n2;
+                },
+                subtract : function(n1, n2){
+                    return n1 - n2;
+                },
+                multiply : function(n1, n2){
+                    return n1 * n2;
+                },
+                divide : function(n1, n2){
+                    return n1 / n2;
+                },
+            };
+            var operations = {
+                '+' : 'add',
+                '-' : 'subtract',
+                '*' : 'multiply',
+                '/' : 'divide'
+            };
+            $(function init(){
+                $("#btnCalculate").click(calculate);
+                $(":text").blur(checkValid);
+            })
+            function checkValid(){
+                var currentId = $(this).attr("id");
+                var errorMessages = isValid();
+                if (errorMessages && errorMessages.hasOwnProperty(currentId)){
+                    $(this).addClass("invalid");
+                } else {
+                    $(this).removeClass("invalid");
+                }
+            }
+            function calculate(){
+                var $errorList = $("#errorList");
+                $errorList.html('');
+
+                var errorMessages = isValid();
+                if (!errorMessages){
+                    var number1 = parseInt($("#txtNumber1").val());
+                    var number2 = parseInt($("#txtNumber2").val());
+
+                    var operation = operations[$("#selectOperation").val()];
+                    var result = calculator[operation](number1, number2);
+                    $("#divResult").html(result);
+                } else {
+                    for(var field in errorMessages){
+                        $errorList.append($("<li>").html(errorMessages[field]));
+                    }
+                }
+            }
+            function isValid(){
+                var errorMessages = null;
+                //validate txtNumber1
+                if ($("#txtNumber1").val() === ''){
+                    errorMessages = errorMessages || {};
+                    errorMessages["txtNumber1"] = "Number1 cannot be empty";
+                }
+                if ($("#txtNumber2").val() === ''){
+                    errorMessages = errorMessages || {};
+                    errorMessages["txtNumber2"] = "Number2 cannot be empty";
+                }
+                return errorMessages;
+            }
+
+        </script>
+    </head>
+    <body>
+        <input type="text" name="n1" id="txtNumber1">
+        <select name="" id="selectOperation">
+            <option value="+">add</option>
+            <option value="-">subtract</option>
+            <option value="*">multiply</option>
+            <option value="/">divide</option>
+        </select>
+        <input type="text" name="n2" id="txtNumber2">
+        <input type="button" value="Calculate" id="btnCalculate">
+        <div id="divResult">[Result]</div>
+        <div class="errorMessages">
+            <ol id="errorList">
+
+            </ol>
+        </div>
+    </body>
+</html>
