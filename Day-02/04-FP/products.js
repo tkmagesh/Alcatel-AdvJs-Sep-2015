@@ -98,4 +98,52 @@ print("Sorting", function(){
     });
 });
 
+print("Filtering", function(){
+    print("All category 1 products", function(){
+        var filterCategory1Products = function(){
+            var result = [];
+            for(var i=0; i<products.length; i++)
+                if (products[i].category === 1)
+                    result.push(products[i]);
+            return result;
+        }
+        var allCategory1Products = filterCategory1Products();
+        console.table(allCategory1Products);
+    });
+    print("All costly products [cost > 50]", function(){
+        var filterCostlyProducts = function(){
+            var result = [];
+            for(var i=0; i<products.length; i++)
+                if (products[i].cost > 50)
+                    result.push(products[i]);
+            return result;
+        }
+        var allCostlyProducts = filterCostlyProducts();
+        console.table(allCostlyProducts);
+    });
+    print("Filter [any list by any criteria", function(){
+        function filter(list, criteriaFn){
+            var result = [];
+            for(var i=0; i<list.length; i++)
+                if (criteriaFn(list[i]))
+                    result.push(list[i]);
+            return result;
+        }
+        var costlyProductCriteria = function(product){
+            return product.cost > 50;
+        }
+        print("Costly Products", function(){
+            var allCostlyProducts = filter(products, costlyProductCriteria);
+            console.table(allCostlyProducts);
+        });
+        var category1ProductCriteria = function(product){
+            return product.category === 1;
+        };
+        print("Category 1 products", function(){
+            var allCategory1Products = filter(products, category1ProductCriteria);;
+            console.table(allCategory1Products);
+        });
+    });
+});
+
 
