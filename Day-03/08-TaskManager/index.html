@@ -22,6 +22,17 @@
             border-radius: 4px;
             margin-bottom: 5px;
         }
+        #divMessages{
+            position: absolute;
+            right : 0px;
+            bottom: 0px;
+            margin: 5px;
+        }
+        .message{
+            border : 1px solid black;
+            padding: 3px;
+            margin: 3px;
+        }
     </style>
     <script>
     /*
@@ -40,18 +51,38 @@
             $("#btnAddTask").click(function(){
                 $("<li></li>")
                     .html($("#txtTask").val())
-                    .appendTo("#olTaskList");
+                    .prependTo("#olTaskList")
+                    .hide()
+                    .slideDown('slow');
                 displayMessage("A new task is added");
             });
+            $("#divMessage").hide();
             $("#olTaskList").on("click", "li", function(){
                 $(this).toggleClass("completed");
             });
             $("#btnRemoveCompleted").click(function(){
-                $("#olTaskList > li.completed").fadeOut();
+                $("#olTaskList > li.completed").fadeOut('slow', function(){
+                    $(this).remove();
+                });
                 displayMessage("Zero or more completed tasks are removed");
+
             });
             function displayMessage(msg){
-                $("#divMessage").html(msg);
+                /*$("#divMessage")
+                    .html(msg)
+                    .fadeIn('slow')
+                    .delay(3000)
+                    .fadeOut('fast');*/
+                $("<div></div>")
+                    .addClass("message")
+                    .html(msg)
+                    .appendTo("#divMessages")
+                    .hide()
+                    .slideDown('slow')
+                    .delay(3000)
+                    .slideUp('fast', function(){
+                        $(this).remove();
+                    });
             }
         });
     </script>
@@ -69,7 +100,10 @@
             <li>Explore chennai</li>
             <li>Master jQuery</li>
         </ol>
-        <div id="divMessage">[App messages will be displayed here]</div>
+        <div id="divMessages">
+
+        </div>
+
     </div>
 </body>
 </html>
