@@ -1,0 +1,29 @@
+HTML5
+    - Browser as a virtual operating system
+    
+Web Applications
+
+Desktop         Web
+
+Offline         Not Possible
+Data Storage    NP
+Device Access   NP
+Multi threading NP
+Real time       NP
+
+
+localStorage - window.localStorage
+sessionStorage - window.sessionStorage
+
+    key/value store
+    key & value should be strings
+    10MB for each origin
+    Secured by Same Origin Policy (SOP)
+    
+    APIs
+        - setItem(key, value)
+        - getItem(key) //=> value
+        - removeItem(key)
+        - key(index) //=> key at index
+        - length 
+        - clear()
