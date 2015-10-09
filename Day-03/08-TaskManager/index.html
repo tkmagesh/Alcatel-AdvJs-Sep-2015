@@ -34,6 +34,27 @@
     5. Display a message when a task is added or removed
     */
     </script>
+    <script src="jquery-2.1.4.js"></script>
+    <script>
+        $(function(){
+            $("#btnAddTask").click(function(){
+                $("<li></li>")
+                    .html($("#txtTask").val())
+                    .appendTo("#olTaskList");
+                displayMessage("A new task is added");
+            });
+            $("#olTaskList").on("click", "li", function(){
+                $(this).toggleClass("completed");
+            });
+            $("#btnRemoveCompleted").click(function(){
+                $("#olTaskList > li.completed").fadeOut();
+                displayMessage("Zero or more completed tasks are removed");
+            });
+            function displayMessage(msg){
+                $("#divMessage").html(msg);
+            }
+        });
+    </script>
 </head>
 <body>
     <h1>Task Manager</h1>
