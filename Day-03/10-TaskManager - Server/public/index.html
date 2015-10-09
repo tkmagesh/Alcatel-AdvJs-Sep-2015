@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Manager</title>
+    <style>
+        .completed{
+            color : red;
+            text-decoration: line-through;
+            font-style: italic;
+            font-weight: bold;
+        }
+        ol{
+            width : 50%;
+            list-style : none;
+        }
+        li{
+            cursor: pointer;
+            padding: 5px;
+            border : 2px solid gray;
+            background-color: #e7e7e7;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+        #divMessages{
+            position: absolute;
+            right : 0px;
+            bottom: 0px;
+            margin: 5px;
+        }
+        .message{
+            border : 1px solid black;
+            padding: 3px;
+            margin: 3px;
+        }
+    </style>
+    <script>
+    /*
+    Use Cases
+    =========
+    1. Add a task
+    2. List the tasks
+    3. Toggle the completion status of the task
+    4. Remove completed tasks
+    5. Display a message when a task is added or removed
+    */
+    </script>
+    <script src="jquery-2.1.4.js"></script>
+    <script>
+        $(function(){
+            $("#ajaxStatus").hide();
+            $(document).ajaxStart(function(){
+                $("#ajaxStatus").show();
+            }).ajaxComplete(function(){
+                $("#ajaxStatus").hide();
+            });
+
+            $.getJSON("/tasks", function(data){
+                data.forEach(addTaskToList);
+            });
+            $("#btnAddTask").click(function(){
+                var newTask = {
+                    name : $("#txtTask").val(),
+                    isClosed : false
+                };
+                $.ajax({
+                    url : "/tasks",
+                    method : 'POST',
+                    contentType : "application/json",
+                    dataType : "json",
+                    data : JSON.stringify(newTask),
+                    success : addTaskToList
+                });
+
+
+            });
+            function addTaskToList(task){
+                 $("<li></li>")
+                    .html(task.name)
+                    .attr("task-id", task.id)
+                    .addClass(task.isClosed ? "completed" : "")
+                    .prependTo("#olTaskList")
+                    .hide()
+                    .slideDown('slow');
+            }
+            $("#divMessage").hide();
+            $("#olTaskList").on("click", "li", function(){
+                var $this = $(this);
+                var requestData = {
+                    isClosed : !$this.hasClass("completed")
+                };
+                $.ajax({
+                    url : "/tasks/" + $this.attr("task-id"),
+                    method : 'patch',
+                    contentType : "application/json",
+                    dataType : "json",
+                    data : JSON.stringify(requestData),
+                    success : function(){
+                        $this.toggleClass("completed");
+                    }
+                });
+            });
+            $("#btnRemoveCompleted").click(function(){
+                $("#olTaskList > li.completed").each(function(index, element){
+                    var $this = $(this);
+                    var taskId = $this.attr("task-id");
+                    $.ajax({
+                        url : "/tasks/" + taskId,
+                        method : 'delete',
+                        contentType : "application/json",
+                        dataType : "json",
+                        success : function(){
+                            $this.fadeOut('slow', function(){
+                                $(this).remove();
+                            });
+                        }
+                    });
+                });
+                displayMessage("Zero or more completed tasks are removed");
+            });
+            function displayMessage(msg){
+                /*$("#divMessage")
+                    .html(msg)
+                    .fadeIn('slow')
+                    .delay(3000)
+                    .fadeOut('fast');*/
+                $("<div></div>")
+                    .addClass("message")
+                    .html(msg)
+                    .appendTo("#divMessages")
+                    .hide()
+                    .slideDown('slow')
+                    .delay(3000)
+                    .slideUp('fast', function(){
+                        $(this).remove();
+                    });
+            }
+
+        });
+    </script>
+</head>
+<body>
+    <h1>Task Manager</h1>
+    <hr>
+    <div class="content">
+        <label for="">Task :</label>
+        <input type="text" name="" id="txtTask">
+        <input type="button" value="Add Task" id="btnAddTask">
+        <input type="button" value="Remove Completed" id="btnRemoveCompleted">
+        <ol id="olTaskList">
+
+        </ol>
+        <div id="ajaxStatus">
+            Loading..!! Please wait!!!
+        </div>
+        <div id="divMessages">
+
+        </div>
+
+    </div>
+</body>
+</html>
