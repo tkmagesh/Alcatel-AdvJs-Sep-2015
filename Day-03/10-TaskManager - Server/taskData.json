@@ -1,0 +1,19 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "name": "Plan for vacation",
+      "isClosed": false
+    },
+    {
+      "id": 2,
+      "name": "Watch Puli",
+      "isClosed": false
+    },
+    {
+      "id": 3,
+      "name": "Explore Chennai",
+      "isClosed": false
+    }
+  ]
+}
