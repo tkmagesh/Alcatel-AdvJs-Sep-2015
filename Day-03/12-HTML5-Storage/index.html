@@ -47,22 +47,71 @@
     </script>
     <script src="jquery-2.1.4.js"></script>
     <script>
+        function getTaskStorage(){
+            var storage = window.localStorage;
+            function getAll(){
+                var result = [];
+                for(var i=0; i<storage.length; i++){
+                    var data = storage.getItem(storage.key(i));
+                    var task = JSON.parse(data);
+                    result.push(task);
+                }
+                return result;
+            }
+            function save(task){
+                storage.setItem(task.id, JSON.stringify(task));
+            }
+            function remove(taskId){
+                storage.removeItem(taskId);
+            }
+            function toggle(taskId){
+                var task = JSON.parse(storage.getItem(taskId));
+                task.isCompleted = !task.isCompleted;
+                storage.setItem(taskId, JSON.stringify(task));
+            }
+            return {
+                getAll : getAll,
+                save : save,
+                toggle : toggle,
+                remove: remove
+            }
+        }
+    </script>
+    <script>
         $(function(){
-            $("#btnAddTask").click(function(){
+            var taskStorage = getTaskStorage();
+            taskStorage.getAll().forEach(addTaskToList);
+            function addTaskToList(task){
                 $("<li></li>")
-                    .html($("#txtTask").val())
+                    .html(task.name)
+                    .attr("task-id", task.id)
+                    .addClass(task.isCompleted ? "completed" : "")
                     .prependTo("#olTaskList")
                     .hide()
                     .slideDown('slow');
+            }
+
+            $("#btnAddTask").click(function(){
+                var taskName = $("#txtTask").val();
+                var newTask = {
+                    id : Date.now(),
+                    name : taskName,
+                    isCompleted : false
+                };
+                taskStorage.save(newTask);
+                addTaskToList(newTask);
                 displayMessage("A new task is added");
             });
             $("#divMessage").hide();
             $("#olTaskList").on("click", "li", function(){
-                $(this).toggleClass("completed");
+                var $this = $(this);
+                $this.toggleClass("completed");
+                taskStorage.toggle($this.attr("task-id"));
             });
             $("#btnRemoveCompleted").click(function(){
                 $("#olTaskList > li.completed").fadeOut('slow', function(){
                     $(this).remove();
+                    taskStorage.remove($(this).attr("task-id"));
                 });
                 displayMessage("Zero or more completed tasks are removed");
 
@@ -92,9 +141,7 @@
         <input type="button" value="Add Task" id="btnAddTask">
         <input type="button" value="Remove Completed" id="btnRemoveCompleted">
         <ol id="olTaskList">
-            <li class="completed">Have breakfast</li>
-            <li>Explore chennai</li>
-            <li>Master jQuery</li>
+
         </ol>
         <div id="divMessages">
 
