@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Manager</title>
+    <style>
+        .completed{
+            color : red;
+            text-decoration: line-through;
+            font-style: italic;
+            font-weight: bold;
+        }
+        ol{
+            width : 50%;
+            list-style : none;
+        }
+        li{
+            cursor: pointer;
+            padding: 5px;
+            border : 2px solid gray;
+            background-color: #e7e7e7;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+        #divMessages{
+            position: absolute;
+            right : 0px;
+            bottom: 0px;
+            margin: 5px;
+        }
+        .message{
+            border : 1px solid black;
+            padding: 3px;
+            margin: 3px;
+        }
+    </style>
+    <script>
+    /*
+    Use Cases
+    =========
+    1. Add a task
+    2. List the tasks
+    3. Toggle the completion status of the task
+    4. Remove completed tasks
+    5. Display a message when a task is added or removed
+    */
+    </script>
+    <script src="jquery-2.1.4.js"></script>
+    <script>
+        function getTaskStorage(){
+            var storage = window.sessionStorage;
+            function getAll(){
+                var result = [];
+                for(var i=0; i<storage.length; i++){
+                    var data = storage.getItem(storage.key(i));
+                    var task = JSON.parse(data);
+                    result.push(task);
+                }
+                return result;
+            }
+            function save(task){
+                storage.setItem(task.id, JSON.stringify(task));
+            }
+            function remove(taskId){
+                storage.removeItem(taskId);
+            }
+            function toggle(taskId){
+                var task = JSON.parse(storage.getItem(taskId));
+                task.isCompleted = !task.isCompleted;
+                storage.setItem(taskId, JSON.stringify(task));
+            }
+            return {
+                getAll : getAll,
+                save : save,
+                toggle : toggle,
+                remove: remove
+            }
+        }
+    </script>
+    <script>
+        $(function(){
+            var taskStorage = getTaskStorage();
+            taskStorage.getAll().forEach(addTaskToList);
+            function addTaskToList(task){
+                $("<li></li>")
+                    .html(task.name)
+                    .attr("task-id", task.id)
+                    .addClass(task.isCompleted ? "completed" : "")
+                    .prependTo("#olTaskList")
+                    .hide()
+                    .slideDown('slow');
+            }
+
+            $("#btnAddTask").click(function(){
+                var taskName = $("#txtTask").val();
+                var newTask = {
+                    id : Date.now(),
+                    name : taskName,
+                    isCompleted : false
+                };
+                taskStorage.save(newTask);
+                addTaskToList(newTask);
+                displayMessage("A new task is added");
+            });
+            $("#divMessage").hide();
+            $("#olTaskList").on("click", "li", function(){
+                var $this = $(this);
+                $this.toggleClass("completed");
+                taskStorage.toggle($this.attr("task-id"));
+            });
+            $("#btnRemoveCompleted").click(function(){
+                $("#olTaskList > li.completed").fadeOut('slow', function(){
+                    $(this).remove();
+                    taskStorage.remove($(this).attr("task-id"));
+                });
+                displayMessage("Zero or more completed tasks are removed");
+
+            });
+            function displayMessage(msg){
+
+                $("<div></div>")
+                    .addClass("message")
+                    .html(msg)
+                    .appendTo("#divMessages")
+                    .hide()
+                    .slideDown('slow')
+                    .delay(3000)
+                    .slideUp('fast', function(){
+                        $(this).remove();
+                    });
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>Task Manager</h1>
+    <hr>
+    <div class="content">
+        <label for="">Task :</label>
+        <input type="text" name="" id="txtTask">
+        <input type="button" value="Add Task" id="btnAddTask">
+        <input type="button" value="Remove Completed" id="btnRemoveCompleted">
+        <ol id="olTaskList">
+
+        </ol>
+        <div id="divMessages">
+
+        </div>
+
+    </div>
+</body>
+</html>
