@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" manifest="app.manifest">
+<html lang="en" manifest="app.manifest" >
 <head>
     <meta charset="UTF-8">
     <title>Task Manager</title>
@@ -9,10 +9,17 @@
     <script src="jquery-2.1.4.js"></script>
     <script src="taskStorage.js"></script>
     <script src="taskManager.js"></script>
+    <script>
+    applicationCache.onupdateready = function(){
+        var response = confirm("A new version of the app is available. Do you want to use it?");
+        if (response)
+            window.location.reload();
+    }
+    </script>
 </head>
 <body>
     <h1>Task Manager</h1>
-    <h3>Ver 1.0</h3>
+    <h3>Ver 5.0</h3>
     <hr>
     <div class="content">
         <label for="">Task :</label>
