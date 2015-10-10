@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Notifications</title>
+    <script>
+    window.addEventListener("DOMContentLoaded", function(){
+        document.getElementById("btnShowNotification")
+            .addEventListener("click", function(){
+                Notification.requestPermission(function(){
+                    var n = new Notification("some title", {
+                       body : "some message for demonstrating notifcation",
+                       icon : "noti-icon.png"
+                    })
+                });
+        });
+    });
+    </script>
+</head>
+<body>
+    <input type="button" value="Show Notification" id="btnShowNotification">
+</body>
+</html>

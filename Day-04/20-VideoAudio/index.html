@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script>
+        window.addEventListener("DOMContentLoaded", init);
+        var videoElement = null;
+        function init(){
+            var btnPausePlay = document.getElementById("btnPausePlay");
+            btnPausePlay.addEventListener("click", onBtnClick);
+
+            videoElement = document.getElementById("vid1");
+        }
+        function onBtnClick(){
+            if (this.value === 'Pause'){
+                videoElement.pause();
+                this.value = 'Play';
+            } else {
+                videoElement.play();
+                this.value = "Pause";
+            }
+        }
+
+    </script>
+</head>
+<body>
+    <video autoplay id="vid1" src="BarrySchwartz_2009.mp4"></video>
+    <input type="button" value="Pause" id="btnPausePlay">
+</body>
+</html>
